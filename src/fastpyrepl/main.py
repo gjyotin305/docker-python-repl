@@ -1,10 +1,11 @@
+from typing import Annotated
 from threading import Lock
 from uuid import uuid4
 from fastapi import FastAPI
 from pydantic import BaseModel
+import typer
 import uvicorn
-
-from python_http.server_utils import ExecRequest, ExecResponse, SessionEnv
+from fastpyrepl.server_utils import ExecRequest, ExecResponse, SessionEnv
 
 
 app = FastAPI(title="Python HTTP Executor")
@@ -61,6 +62,16 @@ def reset(req: ResetRequest) -> dict[str, str]:
         return {"status": "ok", "message": "reset all sessions"}
 
 
+def main() -> None:
+    def run(
+        host: Annotated[str, typer.Option(help="Host interface to bind")] = "0.0.0.0",
+        port: Annotated[int, typer.Option(help="Port to listen on")] = 8000,
+        reload: Annotated[bool, typer.Option(help="Enable auto-reload")] = False,
+    ) -> None:
+        uvicorn.run("fastpyrepl.main:app", host=host, port=port, reload=reload)
+
+    typer.run(run)
+
+
 if __name__ == "__main__":
-    uvicorn.run("python_http.main:app", host="0.0.0.0", port=8000, reload=True)
-    
+    main()
