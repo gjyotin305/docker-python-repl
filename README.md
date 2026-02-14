@@ -4,6 +4,12 @@
 
 ## Install
 
+From pypi:
+
+```bash
+pip install fastpyrepl
+```
+
 From source:
 
 ```bash
