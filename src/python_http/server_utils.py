@@ -4,8 +4,7 @@ import time
 
 class ExecRequest(BaseModel):
     code: str
-    context_json: Optional[Dict[str, Any] | List[str]] = None
-    context_str: Optional[str] = None
+    context: Optional[str] = None
     setup_code: Optional[str] = None
     session_id: Optional[str] = None
     return_locals: bool = False
@@ -20,13 +19,11 @@ class ExecResponse(BaseModel):
     error: Optional[str] = None
 
 class SessionEnv:
-    def __init__(self, context_json=None, context_str=None, setup_code=None) -> None:
+    def __init__(self, context=None, setup_code=None) -> None:
         self.globals = {'__builtins__': __builtins__}
         self.locals = {}
-        if context_json is not None:
-            self.locals["context"] = context_json
-        if context_str is not None:
-            self.locals["context"] = context_str
+        if context is not None:
+            self.locals["context"] = context
         if setup_code:
             self.execute(setup_code)
     
@@ -58,7 +55,8 @@ print("matrix:\\n", m)
 print("transpose:\\n", m.T)
 print("determinant:", np.linalg.det(m))"""
     env = SessionEnv(
-        context_json={'context': ''}
+        context="",
     )
     stdout, stderr, error, execution_time = env.execute(test_code)
     print(stderr)
+    print(env.locals)
